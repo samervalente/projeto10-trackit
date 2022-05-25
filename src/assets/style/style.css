@@ -1,0 +1,34 @@
+*{
+    box-sizing: border-box;
+   
+}
+
+:root{
+    --body: #E5E5E5;
+    --choiceDay:#CFCFCF;
+    --azulClaro:#52B6FF;
+    --azulEscuro:#126BA5;
+    --cinzaClaro:#D4D4D4;
+    --cinzaEscuro:#DBDBDB;
+    --PretoClaro: #666666;
+    --VerdeLimão:#8FC549;
+}
+
+body{
+    font-family: 'Lexend Deca','sans-serif';
+    
+}
+
+button{
+    background-color:var(--azulClaro);
+    border-radius:5px;
+    color:white;
+    border:none;
+    font-family: 'Lexend Deca','sans-serif';
+}
+
+h1{
+    font-family:'Playball', 'sans-serif';
+    font-size:70px;
+    color:var(--azulEscuro)
+}
