@@ -1,18 +1,23 @@
 import { useEffect, useContext, useState } from "react"
 import axios from "axios"
-import UserContext from "../contexts/UserContext";
+import UserContext from "../../contexts/UserContext";
 import styled from "styled-components"
-import Menu from "./Menu";
-import Percentagem from "../contexts/Percentagem";
-import TodayHabits from "../contexts/todayHabits";
+import Menu from "../layout/Menu";
+import Percentagem from "../../contexts/Percentagem";
+import TodayHabits from "../../contexts/todayHabits";
 
 export default function TodayScreen({contador, setContador}) {
 
     const { user } = useContext(UserContext)
     const { todayHabits, setTodayHabits } = useContext(TodayHabits)
-    const { setPercentagem } = useContext(Percentagem)
-    const config = {headers: {Authorization: `Bearer ${user.token}`}}
-    const [done, setDone] = useState(false)
+    const {percentagem, setPercentagem } = useContext(Percentagem)
+    const config = {
+        headers: {
+            Authorization: `Bearer ${user.token}`
+        }
+    }
+
+     
 
     useEffect(() => {
         let promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", config)
@@ -20,32 +25,42 @@ export default function TodayScreen({contador, setContador}) {
         promise.then(resposta => setTodayHabits([...resposta.data]))
     }, [])
 
+    function Done(idHabit) {
+        console.log(config)
+        let promiseCheck = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${idHabit}/check`, config)
+        promiseCheck.then(resposta => console.log(resposta))
 
-    function Done() {
-        setDone(true)
-        //1/2 = 0.5*100 = 50
-        //2/2 = 1*100 = 100
-        setContador(contador + 1)
-        setPercentagem((contador / todayHabits.length) * 100)
-
+        let dones = todayHabits.map((object) => {
+            if(object.id === idHabit){
+                if(object.done === true){ 
+                    setContador(contador-1)
+                    return {...object, done:false}
+                }
+                setContador(contador+1)
+                return {...object, done:true}
+            }else{
+                return {...object}
+            }
+        })
+   setTodayHabits(dones)
+ 
     }
-    console.log(contador)
+    setPercentagem((contador/todayHabits.length)*100)
+    
     function HabitsToday() {
         return <>
             <ul>
                 {todayHabits.map(object => {
-
-                    return <HabitToday >
+                    return <HabitToday done={object.done} >
                         <div>
                             <h2>{object.name}</h2>
                             <p>Sequência atual: {object.currentSequence} dias</p>
                             <p>Seu recorde: {object.highestSequence} dias</p>
                         </div>
-                        <ion-icon onClick={Done} done={done} name="checkbox"></ion-icon>
+                        <ion-icon onClick={() => Done(object.id)} done={object.done} name="checkbox"></ion-icon>
                     </HabitToday>
                 })}
             </ul>
-
         </>
     }
 
@@ -60,10 +75,9 @@ export default function TodayScreen({contador, setContador}) {
             <Container>
                 <Label>
                     <h3>Quinta, 25/05</h3>
-                    <p>Nenhum hábito concluido ainda</p>
+                    {contador > 0? <p>{percentagem.toFixed(0)}% dos hábitos concluídos</p>: <p>Nenhum hábito concluido ainda</p>}
                 </Label>
                 <HabitsToday />
-
             </Container>
             <Menu />
         </>
@@ -141,7 +155,7 @@ div{
 }
 
 ion-icon{
-    color:${props => props.done? "green": "#E7E7E7"};
+    color:${props => props.done ? "var(--VerdeLimão)": "#E7E7E7"};
     width:70px;
     height:70px;
     border-radius: 5px;

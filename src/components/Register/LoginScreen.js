@@ -1,13 +1,11 @@
 import {Link, useNavigate} from "react-router-dom"
 import {useState, useContext} from "react"
-import UserContext from "../contexts/UserContext";
+import UserContext from "../../contexts/UserContext";
 import axios from "axios"
-
-
 
 import React from 'react';
 import styled from "styled-components";
-import logo from "../assets/logo.png"
+import logo from "../../assets/logo.png"
 
 export default function LoginScreen() {
     const {setUser } = useContext(UserContext);
@@ -28,7 +26,6 @@ const navigate = useNavigate()
         }
 
             )
-     
     }
       
     return (

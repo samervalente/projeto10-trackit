@@ -5,18 +5,18 @@ import Percentagem from "../contexts/Percentagem"
 
 import "../assets/style/reset.css"
 import "../assets/style/style.css"
-import HabitsScreen from "./HabitsScreen";
-import HistoryScreen from "./HistoryScreen";
-import LoginScreen from "./LoginScreen";
-import RegisterScreen from "./RegisterScreen";
-import TodayScreen from "./TodayScreen";
+import HabitsScreen from "./Screens/HabitsScreen";
+import HistoryScreen from "./Screens/HistoryScreen";
+import LoginScreen from "./Register/LoginScreen";
+import RegisterScreen from "./Register/RegisterScreen";
+import TodayScreen from "./Screens/TodayScreen";
 import TodayHabits from "../contexts/todayHabits";
 
 export default function App(){
     const[ user, setUser] = useState("")
     const [percentagem, setPercentagem] = useState(0)
     const [todayHabits, setTodayHabits] = useState([])
-    const [contador, setContador] = useState(1)
+    const [contador, setContador] = useState(0)
 
     return (
         <>

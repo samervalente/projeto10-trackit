@@ -3,8 +3,7 @@ import {useState, useEffect} from "react"
 import axios from "axios"
 
 import styled from "styled-components"
-import logo from "../assets/logo.png"
-
+import logo from "../../assets/logo.png"
 
 export default function RegisterScreen(){
     const navigate = useNavigate()
@@ -18,7 +17,6 @@ export default function RegisterScreen(){
     function Sent(event){
         event.preventDefault()
        
-        
         const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up",body)
         promise.then(resposta => { 
             console.log(resposta)  

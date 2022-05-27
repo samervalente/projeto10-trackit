@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react"
 import axios from "axios"
 import styled from "styled-components"
-import Menu from "./Menu"
-import UserContext from "../contexts/UserContext";
-import Percentagem from "../contexts/Percentagem";
-import TodayHabits from "../contexts/todayHabits";
+import Menu from "../layout/Menu"
+import UserContext from "../../contexts/UserContext";
+import Percentagem from "../../contexts/Percentagem";
+import TodayHabits from "../../contexts/todayHabits";
 
 export default function HabitsScreen({contador}) {
     const data = [{ day: "D" }, { day: "S" }, { day: "T" }, { day: "Q" }, { day: "Q" }, { day: "S" }, { day: "S" }]
@@ -57,12 +57,20 @@ export default function HabitsScreen({contador}) {
     }
 
     function Save() {
-       
+
      let promisePost =   axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", habit, config)
      promisePost.then(resposta => console.log(resposta))
      
         let promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",config)
         promise.then(resposta => {
+
+            
+        let attList = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",config)
+         attList.then(resposta => {
+            setTodayHabits([...resposta.data])
+            console.log(todayHabits)
+        })
+
             setHabits([...resposta.data])
             setPercentagem((contador/todayHabits.length)*100)
            
