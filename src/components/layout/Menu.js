@@ -1,13 +1,15 @@
 import styled from "styled-components"
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Percentagem from "../../contexts/Percentagem";
- 
-export default function Menu() {
-    const {percentagem} = useContext(Percentagem)
+import { useContext } from "react";
 
+export default function Menu() {
+    const navigate = useNavigate()
+
+  
+   
     return <>
         <Body>
             <Link to={"/habitos"}>
@@ -15,7 +17,7 @@ export default function Menu() {
             </Link>
            <Link to={"/today"} >
            <Circular>
-                <CircularProgressbar value={percentagem} text="Hoje" styles={buildStyles({
+                <CircularProgressbar onClick={() => navigate("/today")} value={JSON.parse(localStorage.getItem("Porcentagem"))} text="Hoje" styles={buildStyles({
                     pathColor: `white`,
                     trailColor: "#52B6FF",
                     textColor: 'white'
@@ -31,7 +33,6 @@ export default function Menu() {
     </>
 }
 
-
 const Body = styled.div`
 width:100%;
 height:70px;
@@ -44,6 +45,15 @@ display:flex;
 justify-content:space-between;
 align-items: center;
 padding:0px 20px;
+
+a{
+    text-decoration: none;
+}
+
+p{
+        color:var(--azulClaro);
+        
+    }
 
 `
 

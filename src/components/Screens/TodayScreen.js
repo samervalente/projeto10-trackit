@@ -5,57 +5,81 @@ import styled from "styled-components"
 import Menu from "../layout/Menu";
 import Percentagem from "../../contexts/Percentagem";
 import TodayHabits from "../../contexts/todayHabits";
+import HabitsDone from "../../contexts/HabitsDone"
 
-export default function TodayScreen({contador, setContador}) {
+export default function TodayScreen() {
+    const dayjs = require('dayjs')
+    var updateLocale = require('dayjs/plugin/updateLocale')
+    dayjs.extend(updateLocale)
+    
+    var weekday = require('dayjs/plugin/weekday')
+    dayjs.extend(weekday)
 
+   let days =  dayjs.updateLocale('en', {
+        weekdays: [
+            "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
+          ]
+    })
+
+    let weekDay = days.weekdays[dayjs().weekday()]
+    let date = dayjs(`${dayjs().month()+1}-${dayjs().date()}`).format('DD/MM')
+  
     const { user } = useContext(UserContext)
     const { todayHabits, setTodayHabits } = useContext(TodayHabits)
-    const {percentagem, setPercentagem } = useContext(Percentagem)
+    const { setHabitsDone} = useContext(HabitsDone)
+  
     const config = {
         headers: {
             Authorization: `Bearer ${user.token}`
         }
     }
-
-     
-
+   const body = {}
     useEffect(() => {
         let promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", config)
 
         promise.then(resposta => setTodayHabits([...resposta.data]))
+
     }, [])
 
-    function Done(idHabit) {
-        console.log(config)
-        let promiseCheck = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${idHabit}/check`, config)
-        promiseCheck.then(resposta => console.log(resposta))
+    localStorage.setItem("User",JSON.stringify(user))
 
-        let dones = todayHabits.map((object) => {
+    function Done(idHabit) {
+      let dones =  todayHabits.map((object) => {
             if(object.id === idHabit){
+                
                 if(object.done === true){ 
-                    setContador(contador-1)
+                    axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${idHabit}/uncheck`,body, config)
                     return {...object, done:false}
                 }
-                setContador(contador+1)
+                
+                axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${idHabit}/check`,body, config)
                 return {...object, done:true}
             }else{
                 return {...object}
             }
         })
-   setTodayHabits(dones)
- 
+
+        //Armazenando a quantidade de hábitos marcados como "feitos" no local storage 
+        let JustDones = dones.filter(object => object.done === true)
+
+        setTodayHabits(dones)
+        setHabitsDone(JustDones.length)
+        localStorage.setItem("Porcentagem", JSON.stringify((JustDones.length/todayHabits.length)*100))
+           
     }
-    setPercentagem((contador/todayHabits.length)*100)
-    
+
     function HabitsToday() {
         return <>
             <ul>
-                {todayHabits.map(object => {
+                {todayHabits.map((object) => {
                     return <HabitToday done={object.done} >
                         <div>
                             <h2>{object.name}</h2>
-                            <p>Sequência atual: {object.currentSequence} dias</p>
-                            <p>Seu recorde: {object.highestSequence} dias</p>
+                            <p>Sequência atual: 
+                                <Em record={object.currentSequence >= object.highestSequence && object.currentSequence > 0 ? "record": null}> {object.currentSequence} {object.currentSequence === 1 ? "dia": "dias"}</Em> </p>
+
+
+                            <p>Seu recorde: <Em record={object.currentSequence <= object.highestSequence && object.currentSequence > 0 ? "record": null}  >{object.highestSequence} {object.highestSequence === 1 ? "dia": "dias"}</Em> </p>
                         </div>
                         <ion-icon onClick={() => Done(object.id)} done={object.done} name="checkbox"></ion-icon>
                     </HabitToday>
@@ -63,7 +87,7 @@ export default function TodayScreen({contador, setContador}) {
             </ul>
         </>
     }
-
+    
     return (
         <>
             <Header>
@@ -74,8 +98,14 @@ export default function TodayScreen({contador, setContador}) {
             </Header>
             <Container>
                 <Label>
-                    <h3>Quinta, 25/05</h3>
-                    {contador > 0? <p>{percentagem.toFixed(0)}% dos hábitos concluídos</p>: <p>Nenhum hábito concluido ainda</p>}
+                    <h3>{weekDay}, {date}</h3>
+                    { JSON.parse(localStorage.getItem("Porcentagem"))   > 0? 
+                    <DonePercentage count={"done"}>
+                        {JSON.parse(localStorage.getItem("Porcentagem")).toFixed(0)}% dos hábitos concluídos
+                        </DonePercentage>: 
+                    <DonePercentage count={null}>
+                        Nenhum hábito concluido ainda
+                    </DonePercentage>}
                 </Label>
                 <HabitsToday />
             </Container>
@@ -126,7 +156,7 @@ h3{
 
 p{
     font-size:18px;
-    color:#BABABA;
+   
 }
 
 `
@@ -139,6 +169,8 @@ justify-content: space-between;
 align-items: center;
 height:95px;
 padding: 0px 10px;
+
+
 
 div{
     h2{
@@ -159,5 +191,15 @@ ion-icon{
     width:70px;
     height:70px;
     border-radius: 5px;
+    cursor:pointer;
 }
 `
+
+const Em = styled.em`
+    color:${props => props.record === "record"? "var(--VerdeLimão)": "var(--PretoClaro)"};
+`
+const DonePercentage = styled.p`
+ color:${props => props.count === "done"? "var(--VerdeLimão)": "var(--PretoClaro)"}
+`
+   
+

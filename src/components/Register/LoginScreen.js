@@ -1,49 +1,56 @@
-import {Link, useNavigate} from "react-router-dom"
-import {useState, useContext} from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { useState, useContext } from "react"
 import UserContext from "../../contexts/UserContext";
 import axios from "axios"
-
-import React from 'react';
 import styled from "styled-components";
+
 import logo from "../../assets/logo.png"
+import Input from "../layout/Inputs"
+import { ThreeDots } from "react-loader-spinner";
 
 export default function LoginScreen() {
-    const {setUser } = useContext(UserContext);
-
+    const { user, setUser } = useContext(UserContext);
+    const [login, setLogin] = useState(false)
+    
     const [body, setBody] = useState({
-        email:"",
-        password:""
+        email: "",
+        password: ""
     })
-const navigate = useNavigate()
+    const navigate = useNavigate()
 
-        
-    function Login(event){
+    function Login(event) {
+        setLogin(true)
         event.preventDefault()
-        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login",body)
-        promise.then((resposta) => 
-        {setUser(resposta.data)
-            navigate("/habitos")
-        }
-
-            )
-    }
       
+            const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", body)
+            promise.then((resposta) => {
+                setUser(resposta.data)
+                const userSerializado = JSON.stringify(user)
+                localStorage.setItem("User", userSerializado)
+               
+                navigate("/today")
+            }
+            )
+       
+    }
+   
+console.log(login)
     return (
         <>
             <Container>
                 <img src={logo}></img>
                 <h1>TrackIt</h1>
-                <form onSubmit={Login}>
+                <form onSubmit={Login} >
                     <Inputs>
-                        <input required type="email" onChange={(event) => setBody({...body, email:event.target.value})} placeholder='email'></input>
-                        <input required type="password" onChange={(event) => setBody({...body, password:event.target.value})} placeholder='senha'></input>
-                    </Inputs>  
-                    <button type="submit">Entrar</button>
+                        <Input required type={"email"} onChange={(event) => setBody({ ...body, email: event.target.value })} placeholder={"email"}></Input>
+                        <Input required type={"password"} onChange={(event) => setBody({ ...body, password: event.target.value })} placeholder={"senha"}></Input>
+                    </Inputs>
+                    {login? <button type="submit"><ThreeDots color="white" width={60} height={30} ></ThreeDots></button>: <button type="submit" >Entrar</button>}
                 </form>
-            
-               <Link to="/cadastro" >
-               <p>Não possui uma conta? <sub>Cadastre-se!</sub></p>
-               </Link>
+              
+                <Link to="/cadastro" >
+                    <p>Não possui uma conta? <sub>Cadastre-se!</sub></p>
+                </Link>
             </Container>
         </>
     )
@@ -58,13 +65,13 @@ flex-direction: column;
 align-items: center;
 justify-content: space-between;
 
-
-
 img{
     width:155px;
 }
 
-
+a{
+    text-decoration: none;
+}
 
 form{
       width:100%;
@@ -73,13 +80,16 @@ form{
 
 button{
         width:100%;
-        height:45px;
-      
+        height:45px; 
+        display: flex;
+        justify-content:center;
+        align-items: center;
+        cursor:pointer;
     }
 
     p{
         color:var(--azulClaro);
-        margin-top:20px;
+        margin-top:20px;  
     }
  
 `;

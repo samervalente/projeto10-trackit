@@ -11,29 +11,32 @@ import LoginScreen from "./Register/LoginScreen";
 import RegisterScreen from "./Register/RegisterScreen";
 import TodayScreen from "./Screens/TodayScreen";
 import TodayHabits from "../contexts/todayHabits";
+import HabitsDone from "../contexts/HabitsDone"
 
-export default function App(){
-    const[ user, setUser] = useState("")
-    const [percentagem, setPercentagem] = useState(0)
+export default function App() {
+    const [user, setUser] = useState("")
+    let [percentagem, setPercentagem] = useState(0)
     const [todayHabits, setTodayHabits] = useState([])
-    const [contador, setContador] = useState(0)
+    const [habitsDone, setHabitsDone] = useState(0)
 
     return (
         <>
-        <UserContext.Provider value={{user, setUser}}>
-            <Percentagem.Provider value ={{percentagem, setPercentagem}}>
-                <TodayHabits.Provider value ={{todayHabits, setTodayHabits}}>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<LoginScreen />} />
-                    <Route path="/cadastro" element={<RegisterScreen />} />
-                    <Route path="/habitos" element={<HabitsScreen contador={contador} />} />
-                    <Route path="/today" element={<TodayScreen setContador={setContador} contador={contador} />}/>
-                    <Route path="/history" element={<HistoryScreen />} />
-                </Routes>
-            </BrowserRouter>
-            </TodayHabits.Provider>
-            </Percentagem.Provider>
+            <UserContext.Provider value={{ user, setUser }}>
+                <Percentagem.Provider value={{ percentagem, setPercentagem }}>
+                    <TodayHabits.Provider value={{ todayHabits, setTodayHabits }}>
+                        <HabitsDone.Provider value={{ habitsDone, setHabitsDone }}>
+                            <BrowserRouter>
+                                <Routes>
+                                    <Route path="/" element={<LoginScreen />} />
+                                    <Route path="/cadastro" element={<RegisterScreen />} />
+                                    <Route path="/habitos" element={<HabitsScreen />} />
+                                    <Route path="/today" element={<TodayScreen />} />
+                                    <Route path="/history" element={<HistoryScreen />} />
+                                </Routes>
+                            </BrowserRouter>
+                        </HabitsDone.Provider>
+                    </TodayHabits.Provider>
+                </Percentagem.Provider>
             </UserContext.Provider>
         </>
 

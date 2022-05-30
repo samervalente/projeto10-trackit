@@ -4,6 +4,7 @@ import axios from "axios"
 
 import styled from "styled-components"
 import logo from "../../assets/logo.png"
+import Input from "../layout/Inputs"
 
 export default function RegisterScreen(){
     const navigate = useNavigate()
@@ -25,20 +26,18 @@ export default function RegisterScreen(){
         )
     }
        
-  
 
- 
     return (<>
-    
+
          <Container>
                 <img src={logo}></img>
                 <h1>TrackIt</h1>
                 <form onSubmit={Sent}>
                     <Inputs>
-                        <input required type="email" onChange={(event) => setBody({...body, email:event.target.value})} placeholder='email'></input>
-                        <input required type="password" onChange={(event) => setBody({...body, password:event.target.value})} placeholder='senha'></input>
-                        <input required type="name" onChange={(event) => setBody({...body, name:event.target.value})} placeholder='name'></input>
-                        <input required type="foto" onChange={(event) => setBody({...body, image:event.target.value})}placeholder='foto'></input>
+                        <Input required type={"email"} onChange={(event) => setBody({...body, email:event.target.value})} placeholder='email'/>
+                        <Input required type={"password"} onChange={(event) => setBody({...body, password:event.target.value})} placeholder='senha'/>
+                        <Input required type={"name" }onChange={(event) => setBody({...body, name:event.target.value})} placeholder='name'/>
+                        <Input required type={"foto" }onChange={(event) => setBody({...body, image:event.target.value})}placeholder='foto'/>
                     </Inputs>
                     <button type="submit" >Cadastrar</button>
                 </form>
@@ -77,6 +76,10 @@ form{
       
   } 
 
+  a{
+    text-decoration: none;
+}
+
 button{
         width:100%;
         height:45px;
@@ -94,16 +97,5 @@ const Inputs = styled.div`
     display:flex;
     flex-direction: column;
     justify-content: center;
-        width:100%;
-
-    input{
-        width:100%;
-        margin:5px 0px;
-        height: 45px;
-        border-radius:5px;
-        padding-left:5px;
-        border:1px solid #D4D4D4;
-        font-family: 'Lexend Deca','sans-serif';
-    }
-
+    width:100%;
 `
